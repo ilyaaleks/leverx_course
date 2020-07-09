@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.Date;
 import java.util.Set;
 
 @Data
@@ -22,10 +23,12 @@ public class User {
     private String password;
     private String email;
     private String photoUrl;
-    @OneToMany(mappedBy = "user",cascade = CascadeType.ALL,fetch = FetchType.LAZY)
+    private Date lastPasswordResetDate;
+    @OneToMany(mappedBy = "user",cascade = CascadeType.ALL,fetch = FetchType.EAGER)
     private Set<Link> links;
     @OneToMany(mappedBy = "author",cascade = CascadeType.ALL,fetch = FetchType.EAGER)
     private Set<Comment> comments;
     private boolean activate;
     private String activationCode;
+    private String role;
 }

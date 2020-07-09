@@ -5,7 +5,7 @@ import org.bstu.fit.model.Comment;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 
-@Mapper
+@Mapper(componentModel = "spring")
 public interface CommentMapper {
     CommentMapper INSTANCE = Mappers.getMapper( CommentMapper.class );
     CommentDto toDTO(Comment comment);

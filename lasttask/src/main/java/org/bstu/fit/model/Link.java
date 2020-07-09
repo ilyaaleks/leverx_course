@@ -23,7 +23,7 @@ public class Link {
     private Status status;
     @ManyToMany(mappedBy = "links",cascade = CascadeType.ALL, fetch=FetchType.EAGER)
     private Set<Tag> tags;
-    @OneToMany(mappedBy = "link",cascade = CascadeType.ALL,fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "link",cascade = CascadeType.ALL,fetch = FetchType.EAGER)
     private Set<Comment> comments;
     private long countOfLikes;
     private long countOfDislikes;

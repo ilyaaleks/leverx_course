@@ -12,10 +12,12 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -27,16 +29,18 @@ public class UserServiceImpl implements UserService {
     private final BCryptPasswordEncoder passwordEncoder;
     private MailSender mailSender;
     private Environment env;
+    private UserMapper userMapper;
 
-    public UserServiceImpl(UserRepository userRepository, BCryptPasswordEncoder passwordEncoder, MailSender mailSender, Environment env) {
+    public UserServiceImpl(UserRepository userRepository, BCryptPasswordEncoder passwordEncoder, MailSender mailSender, Environment env, UserMapper userMapper) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.mailSender = mailSender;
         this.env = env;
+        this.userMapper = userMapper;
     }
 
     @Override
-    public UserDto register(UserDto userDto) {
+    public User register(UserDto userDto) {
         User user=UserMapper.INSTANCE.fromDTO(userDto);
         User existUser=userRepository.findByUsername(user.getUsername());
         if(existUser!=null)
@@ -55,7 +59,7 @@ public class UserServiceImpl implements UserService {
                 user.getActivationCode());
         mailSender.send(user.getEmail(),"Activation Code",message);
         User registeredUser=userRepository.save(user);
-        return UserMapper.INSTANCE.toDTO(registeredUser);
+        return registeredUser;
     }
 
     @Override
@@ -77,28 +81,40 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User findByUsername(String username) {
-        return null;
+        User user=userRepository.findByUsername(username);
+        if(user==null)
+        {
+            throw new UsernameNotFoundException("Username not found");
+        }
+        return user;
     }
 
     @Override
     public User findById(long id) {
-        return null;
+        User user=userRepository.findById(id);
+        if(user==null)
+        {
+            throw new IllegalArgumentException("User with id not found");
+        }
+        return user;
     }
 
     @Override
     public void delete(long id) {
-
+        userRepository.deleteById(id);
     }
 
     @Override
-    public UserDto activateUser(String code) {
+    public User activateUser(String code) {
         User user=userRepository.findByActivationCode(code);
         if(user ==null)
         {
             throw new IllegalArgumentException("Invalid user activation code");
         }
         user.setActivationCode(null);
+        user.setLastPasswordResetDate(new Date());
+        user.setActivate(true);
         User activatedUser=userRepository.save(user);
-        return UserMapper.INSTANCE.toDTO(activatedUser);
+        return activatedUser;
     }
 }

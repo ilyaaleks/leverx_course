@@ -9,4 +9,5 @@ public interface UserRepository extends CrudRepository<User, Long> {
     User findByUsername(String username);
     Page<User> findAll(Pageable pageable);
     User findByActivationCode(String code);
+    User findById(long id);
 }
