@@ -3,10 +3,11 @@ package org.bstu.fit.controller;
 import org.bstu.fit.converter.UserMapper;
 import org.bstu.fit.dto.UserDto;
 import org.bstu.fit.service.UserService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/registration")
+@RequestMapping("api/registration")
 public class RegistrationController {
     public UserService userService;
 
@@ -15,14 +16,14 @@ public class RegistrationController {
     }
 
     @PostMapping
-    public UserDto register(@RequestBody UserDto user)
+    public ResponseEntity<UserDto> register(@RequestBody UserDto user)
     {
-        return UserMapper.INSTANCE.toDTO(userService.register(user));
+        return ResponseEntity.ok(UserMapper.INSTANCE.toDTO(userService.register(user)));
     }
     @GetMapping("/activate/{code}")
-    public UserDto activate(@PathVariable String code)
+    public ResponseEntity<UserDto> activate(@PathVariable String code)
     {
-       return UserMapper.INSTANCE.toDTO(userService.activateUser(code));
+       return ResponseEntity.ok(UserMapper.INSTANCE.toDTO(userService.activateUser(code)));
     }
 
 }

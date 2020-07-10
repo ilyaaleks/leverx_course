@@ -14,11 +14,11 @@ public class UserDto {
     private String lastName;
     private String name;
     private String username;
-    private String password;
     private String email;
     private String photoUrl;
     private Set<LinkDto> links;
     private Set<CommentDto> comments;
     private boolean activate;
     private String activationCode;
+    private String password;
 }

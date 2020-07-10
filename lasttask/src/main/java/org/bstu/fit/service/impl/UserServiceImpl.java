@@ -7,7 +7,6 @@ import org.bstu.fit.model.User;
 import org.bstu.fit.repository.UserRepository;
 import org.bstu.fit.service.MailSender;
 import org.bstu.fit.service.UserService;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.data.domain.Page;
@@ -18,7 +17,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.util.Date;
-import java.util.List;
 import java.util.UUID;
 
 @Service

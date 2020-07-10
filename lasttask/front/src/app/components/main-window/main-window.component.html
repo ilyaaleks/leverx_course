@@ -1,0 +1,44 @@
+<div class="row">
+  <div class="col-1">
+
+  </div>
+
+  <div class="col-5 slideRight">
+    <img class="img-fluid" src="assets/img/world.jpg"/>
+  </div>
+  <div class="col-1">
+
+  </div>
+  <div class="col-5 slideLeft">
+    <form [formGroup]="authForm">
+      <div class="h4 text-center mt-3">INSTAGRAM</div>
+      <div class="mt-5 align-content-center">
+        <div class="input-group p-1">
+          <div class="input-group-prepend ">
+            <span class="input-group-text" id="basic-addon1">@</span>
+          </div>
+          <input type="text" class="form-control" placeholder="Username" aria-label="Username"
+                 aria-describedby="basic-addon1" formControlName="username">
+        </div>
+        <div class="input-group p-1">
+          <div class="input-group-prepend">
+                    <span class="input-group-text" id="basic-addon5"><i class="fas fa-unlock"></i>
+                    </span>
+          </div>
+          <input type="password" class="form-control" placeholder="Password" aria-label="Email"
+                 aria-describedby="basic-addon5" formControlName="password">
+        </div>
+
+
+        <div class=" p-1">
+          <button class="btn btn-danger btn-block" [disabled]="!authForm.valid" id="Sign_in" (click)="authUser()">Sign in</button>
+        </div>
+        <p class="text-muted">or</p>
+        <div class=" p-1">
+          <!--как получать обратно статус сервера, а так же, по необходимости, самому генерировать код ошибки со стороны сервера, чтобы при регистрации показывать, где человек ошибся -->
+          <button class="btn btn-success btn-block" routerLink="/registration" id="Register">Register</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>

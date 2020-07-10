@@ -1,15 +1,19 @@
 package org.bstu.fit.controller;
 
+import org.bstu.fit.dto.AuthToken;
 import org.bstu.fit.dto.JwtToken;
 import org.bstu.fit.dto.LoginPasswordUser;
 import org.bstu.fit.dto.UserDto;
 import org.bstu.fit.model.User;
-import org.bstu.fit.security.jwt.JwtTokenProvider;
+import org.bstu.fit.security.TokenProvider;
 import org.bstu.fit.service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -19,37 +23,33 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.naming.AuthenticationException;
 
 @RestController
-@RequestMapping("/auth")
+@RequestMapping("api/auth")
 public class AuthenticationController {
-    private final AuthenticationManager authenticationManager;
-    private final JwtTokenProvider jwtTokenProvider;
-    private final UserService userService;
+    private AuthenticationManager authenticationManager;
 
-    public AuthenticationController(AuthenticationManager authenticationManager, JwtTokenProvider jwtTokenProvider, UserService userService) {
+    private TokenProvider tokenProvider;
+
+    public AuthenticationController(AuthenticationManager authenticationManager, TokenProvider tokenProvider) {
         this.authenticationManager = authenticationManager;
-        this.jwtTokenProvider = jwtTokenProvider;
-        this.userService = userService;
+        this.tokenProvider = tokenProvider;
     }
-    @PostMapping
-    public ResponseEntity login(@RequestBody LoginPasswordUser userLoginPassword)
-    {
-        try {
-                String username=userLoginPassword.getUsername();
-                String password=userLoginPassword.getPassword();
-                authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username,password));
-            User user=userService.findByUsername(username);
-            if(user==null)
-            {
-                throw new UsernameNotFoundException("Username not found");
-            }
-            String token=jwtTokenProvider.createToken(username);
-            JwtToken jwtToken=new JwtToken(token);
-            return ResponseEntity.ok(jwtToken);
 
-        }
-        catch (Exception e)
-        {
-            throw new BadCredentialsException("Invalid username or password;");
-        }
+    @PostMapping("/token")
+    public ResponseEntity register(@RequestBody LoginPasswordUser loginUser) {
+        final Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                        loginUser.getUsername(),
+                        loginUser.getPassword()
+                )
+        );
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        final String token = tokenProvider.generateToken(authentication);
+        return ResponseEntity.ok(new AuthToken(token));
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity logout() {
+        SecurityContextHolder.getContext().setAuthentication(null);
+        return ResponseEntity.ok(null);
     }
 }
