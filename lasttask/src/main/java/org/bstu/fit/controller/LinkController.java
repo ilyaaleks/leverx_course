@@ -7,6 +7,7 @@ import org.bstu.fit.dto.LinkPageDto;
 import org.bstu.fit.model.Link;
 import org.bstu.fit.service.LinkService;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -42,10 +43,10 @@ public class LinkController {
         return ResponseEntity.ok(LinkMapper.INSTANCE.toDTO(link));
     }
     @DeleteMapping("/{linkId}")
-    public ResponseEntity<String> delete(@PathVariable long linkId)
+    @ResponseStatus(value = HttpStatus.OK)
+    public void delete(@PathVariable long linkId)
     {
         linkService.delete(linkId);
-        return ResponseEntity.ok("Delete successfully");
     }
     @PostMapping()
     public ResponseEntity<LinkDto> save(@RequestBody LinkDto linkDto)

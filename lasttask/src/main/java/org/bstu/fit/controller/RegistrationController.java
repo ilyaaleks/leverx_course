@@ -3,8 +3,12 @@ package org.bstu.fit.controller;
 import org.bstu.fit.converter.UserMapper;
 import org.bstu.fit.dto.UserDto;
 import org.bstu.fit.service.UserService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
 @RestController
 @RequestMapping("api/registration")
@@ -16,14 +20,15 @@ public class RegistrationController {
     }
 
     @PostMapping
-    public ResponseEntity<UserDto> register(@RequestBody UserDto user)
+    @ResponseStatus(value = HttpStatus.OK)
+    public void register(@RequestBody UserDto user)
     {
-        return ResponseEntity.ok(UserMapper.INSTANCE.toDTO(userService.register(user)));
+        UserMapper.INSTANCE.toDTO(userService.register(user));
     }
     @GetMapping("/activate/{code}")
-    public ResponseEntity<UserDto> activate(@PathVariable String code)
-    {
-       return ResponseEntity.ok(UserMapper.INSTANCE.toDTO(userService.activateUser(code)));
+    public void activate(@PathVariable String code, HttpServletResponse response) throws IOException {
+       UserMapper.INSTANCE.toDTO(userService.activateUser(code));
+       response.sendRedirect("http://localhost:4200/home");
     }
 
 }

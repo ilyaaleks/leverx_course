@@ -3,7 +3,6 @@ package org.bstu.fit.service.impl;
 import org.bstu.fit.converter.LinkMapper;
 import org.bstu.fit.dto.LinkDto;
 import org.bstu.fit.dto.LinkPageDto;
-import org.bstu.fit.dto.TagDto;
 import org.bstu.fit.model.Link;
 import org.bstu.fit.model.Tag;
 import org.bstu.fit.repository.LinkRepository;
@@ -15,8 +14,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
-import sun.awt.image.ImageWatched;
-import sun.jvm.hotspot.oops.ObjArrayKlass;
 
 import java.util.*;
 

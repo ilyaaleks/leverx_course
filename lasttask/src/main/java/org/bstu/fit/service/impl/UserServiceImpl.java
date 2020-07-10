@@ -1,27 +1,39 @@
 package org.bstu.fit.service.impl;
 
 import org.bstu.fit.converter.UserMapper;
+import org.bstu.fit.dto.ImagePath;
 import org.bstu.fit.dto.UserDto;
 import org.bstu.fit.dto.UserPageDto;
 import org.bstu.fit.model.User;
 import org.bstu.fit.repository.UserRepository;
 import org.bstu.fit.service.MailSender;
 import org.bstu.fit.service.UserService;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.expression.AccessException;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.Date;
 import java.util.UUID;
 
 @Service
 @PropertySource("classpath:db.properties")
 public class UserServiceImpl implements UserService {
+    @Value("${upload.path}")
+    private String uploadPath;
 
     private UserRepository userRepository;
     private final BCryptPasswordEncoder passwordEncoder;
@@ -103,6 +115,20 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public User updateUser(UserDto userDto) {
+        if(!userDto.getUsername().equals(getUsernameOfCurrentUser()))
+        {
+            throw new IllegalArgumentException("Unable to update user");
+        }
+        User user=userRepository.findByUsername(userDto.getUsername());
+        user.setLastName(userDto.getLastName());
+        user.setName(userDto.getName());
+        user.setUsername(userDto.getUsername());
+        user.setPassword(passwordEncoder.encode(userDto.getPassword()));
+        return userRepository.save(user);
+    }
+
+    @Override
     public User activateUser(String code) {
         User user=userRepository.findByActivationCode(code);
         if(user ==null)
@@ -114,5 +140,41 @@ public class UserServiceImpl implements UserService {
         user.setActivate(true);
         User activatedUser=userRepository.save(user);
         return activatedUser;
+    }
+
+    @Override
+    public ImagePath updatePhoto(MultipartFile file, String username) {
+        User user=userRepository.findByUsername(username);
+        if(user==null || !user.getUsername().equals(getUsernameOfCurrentUser()) || file==null || file.getOriginalFilename().isEmpty())
+        {
+            throw new IllegalArgumentException("Problems with updating photos");
+        }
+        File uploadDir = new File(uploadPath);
+        if (!uploadDir.exists()) {
+            uploadDir.mkdir();
+        }
+        String uuidFile = UUID.randomUUID().toString();
+        String resultFilename = uuidFile + "." + file.getOriginalFilename();
+        try {
+            file.transferTo(new File(uploadPath + "/" + resultFilename));
+            user.setPhotoUrl(resultFilename);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
+        return new ImagePath(userRepository.save(user).getPhotoUrl());
+    }
+
+    private String getUsernameOfCurrentUser()
+    {
+        String username;
+        Object principal= SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if (principal instanceof UserDetails) {
+            username = ((UserDetails)principal).getUsername();
+        } else {
+            username = principal.toString();
+        }
+        return username;
     }
 }
