@@ -20,6 +20,10 @@ import { LinkPageComponent } from './components/link-page/link-page.component';
 import { NavigationComponent } from './components/navigation/navigation.component';
 import { ItemLinkComponent } from './components/item-link/item-link.component';
 import { CommentComponent } from './components/comment/comment.component';
+import { AboutUserComponent } from './components/about-user/about-user.component';
+import { AddLinkComponent } from './components/add-link/add-link.component';
+import {MatRadioModule} from '@angular/material/radio';
+import { EditUserComponent } from './components/edit-user/edit-user.component';
 
 @NgModule({
   declarations: [
@@ -29,18 +33,22 @@ import { CommentComponent } from './components/comment/comment.component';
     LinkPageComponent,
     NavigationComponent,
     ItemLinkComponent,
-    CommentComponent
+    CommentComponent,
+    AboutUserComponent,
+    AddLinkComponent,
+    EditUserComponent
   ],
     imports: [
         BrowserModule,
-      FormsModule,
-      ReactiveFormsModule,
-      BrowserAnimationsModule,
-      MatDialogModule,
-      HttpClientModule,
-      NgbModule,
-      RouteModuleModule,
-      RouterModule
+        FormsModule,
+        ReactiveFormsModule,
+        BrowserAnimationsModule,
+        MatDialogModule,
+        HttpClientModule,
+        NgbModule,
+        RouteModuleModule,
+        RouterModule,
+        MatRadioModule
     ],
   providers: [{provide: MAT_DIALOG_DEFAULT_OPTIONS, useValue: {hasBackdrop: false}}, UserService,LinkService,{
     provide: HTTP_INTERCEPTORS,

@@ -1,1 +1,38 @@
-<p>item-link works!</p>
+<div class="card img_wrap">
+  <div class="card-header border-success">
+    <h6 class="ml-3 mt-3 card-title float-left"><a [href]="authorId">{{link.user.username}}</a></h6>
+    <i *ngIf="activeUser" (click)="deleteLink()" class="far fa-trash-alt float-right "></i>
+    <i *ngIf="activeUser" (click)="updateLink()" class="far fa-edit float-right mr-2"></i>
+  </div>
+  <div class="card-footer">
+    <section>
+      <span>
+        <button *ngIf="!activeUser"  class="mark_button" (click)="setLike()">
+          <i class="far fa-thumbs-up large_icon"></i>
+        </button>
+        <span class="text-muted h4">{{countOfLikes}}</span>
+      </span>
+      <span>
+        <button (click)="setDislike()"  class="mark_button" *ngIf="!activeUser"><i class="far fa-thumbs-down large_icon"></i></button>
+        <span class="text-muted h4">{{countOfDislike}}</span>
+      </span>
+    </section>
+    <p class="card-text h4">Name: {{link.name}}</p>
+    <p class="card-text h4"><a [href]="link.url">Link</a></p>
+    <p class="card-text"><a [href]='"http://localhost:4200/story/"+item.id' *ngFor="let item of link.tags">{{item.name+" "}}</a></p>
+    <div [formGroup]="commentForm" class="panel-body">
+      <div class="panel-heading">
+        Comment panel
+      </div>
+      <textarea formControlName="comment" class="form-control" placeholder="write a comment..." rows="3"></textarea>
+      <br>
+      <button type="button" *ngIf="commentForm.valid" class="btn btn-info pull-right" (click)="addComment()">Post</button>
+      <div class="clearfix"></div>
+      <hr>
+      <app-comment *ngFor="let comment of comments" [comment]="comment"></app-comment>
+    </div>
+  </div>
+  <ngb-pagination [collectionSize]="totalItems" [pageSize]="itemsPerPage" [(page)]="page" [maxSize]="7" [rotate]="true"
+                  (pageChange)="loadPage($event)"></ngb-pagination>
+
+</div>

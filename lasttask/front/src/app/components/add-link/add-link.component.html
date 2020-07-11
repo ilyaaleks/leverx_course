@@ -1,0 +1,30 @@
+<h2 mat-dialog-title>Add post</h2>
+<div class="d-flex flex-row bd-highlight mb-3" style="overflow:hidden auto; height: auto">
+  <form [formGroup]="postForm">
+    <div class="input-group p-1">
+      <div class="input-group p-1">
+        <input matInput  formControlName="link" placeholder="write a url"><!--class="form-control"-->
+      </div>
+      <div class="input-group p-1">
+        <input matInput type="text" formControlName="tags"  placeholder="tags separated by spaces" aria-label="Email"
+               aria-describedby="basic-addon3">
+      </div>
+      <div class="input-group p-1">
+        <input matInput  formControlName="name" placeholder="write a name"><!--class="form-control"-->
+      </div>
+      <div class="input-group p-1">
+        <mat-radio-group *ngIf="data===null" formControlName="status" aria-label="Select an status">
+          <mat-radio-button *ngIf="data===null" value="public">Public</mat-radio-button>
+          <mat-radio-button *ngIf="data===null" value="protected">Protected</mat-radio-button>
+          <mat-radio-button *ngIf="data===null" value="private">Private</mat-radio-button>
+        </mat-radio-group>
+      </div>
+
+    </div>
+    <div class=" p-1">
+      <button *ngIf="postForm.valid && data===null"  mat-raised-button color="accent" [mat-dialog-close]="true" (click)="addPost()">Add link</button>
+      <button *ngIf="postForm.valid && data!==null"   mat-raised-button color="accent" [mat-dialog-close]="true" (click)="update()">Update</button>
+      <button *ngIf="!postForm.valid" disabled="disabled" >Add post</button>
+    </div>
+  </form>
+</div>

@@ -1,7 +1,7 @@
 import {Link} from './link';
 
 export interface Tag {
-  id: number;
+  id?: number;
   name: string;
-  links: Array<Link>;
+  links?: Array<Link>;
 }

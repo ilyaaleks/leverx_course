@@ -14,6 +14,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.expression.AccessException;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -21,6 +22,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -51,37 +53,36 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User register(UserDto userDto) {
-        User user=UserMapper.INSTANCE.fromDTO(userDto);
-        User existUser=userRepository.findByUsername(user.getUsername());
-        if(existUser!=null)
-        {
+        User user = UserMapper.INSTANCE.fromDTO(userDto);
+        User existUser = userRepository.findByUsername(user.getUsername());
+        if (existUser != null) {
             throw new IllegalArgumentException("User is exist");
         }
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setActivate(false);
         user.setActivationCode(UUID.randomUUID().toString());
-        if(StringUtils.isEmpty(user.getEmail())){
+        user.setPhotoUrl("default.jpg");
+        if (StringUtils.isEmpty(user.getEmail())) {
             throw new IllegalArgumentException("Email is invalid");
         }
-        String message=String.format("Hello to UWSR, %s!\n"+
-                "We are glad to see you. Please, visit the following link: "+env.getRequiredProperty("server.url")+"registration/activate/%s",
+        String message = String.format("Hello to UWSR, %s!\n" +
+                        "We are glad to see you. Please, visit the following link: " + env.getRequiredProperty("server.url") + "registration/activate/%s",
                 user.getUsername(),
                 user.getActivationCode());
-        mailSender.send(user.getEmail(),"Activation Code",message);
-        User registeredUser=userRepository.save(user);
+        mailSender.send(user.getEmail(), "Activation Code", message);
+        User registeredUser = userRepository.save(user);
         return registeredUser;
     }
 
     @Override
     public UserPageDto getPageableUser(Pageable pageable) {
-        Page<User> users=userRepository.findAll(pageable);
-        if(users==null) {
+        Page<User> users = userRepository.findAll(pageable);
+        if (users == null) {
             throw new IllegalArgumentException("Page parameters is invalid");
         }
-        UserPageDto userPageDto=new UserPageDto();
-        for(User user:users.getContent())
-        {
-            UserDto userDto= UserMapper.INSTANCE.toDTO(user);
+        UserPageDto userPageDto = new UserPageDto();
+        for (User user : users.getContent()) {
+            UserDto userDto = UserMapper.INSTANCE.toDTO(user);
             userPageDto.addUser(userDto);
         }
         userPageDto.setTotalPage(users.getTotalPages());
@@ -91,9 +92,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User findByUsername(String username) {
-        User user=userRepository.findByUsername(username);
-        if(user==null)
-        {
+        User user = userRepository.findByUsername(username);
+        if (user == null) {
             throw new UsernameNotFoundException("Username not found");
         }
         return user;
@@ -101,9 +101,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User findById(long id) {
-        User user=userRepository.findById(id);
-        if(user==null)
-        {
+        User user = userRepository.findById(id);
+        if (user == null) {
             throw new IllegalArgumentException("User with id not found");
         }
         return user;
@@ -116,11 +115,10 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User updateUser(UserDto userDto) {
-        if(!userDto.getUsername().equals(getUsernameOfCurrentUser()))
-        {
+        if (!userDto.getUsername().equals(getUsernameOfCurrentUser())) {
             throw new IllegalArgumentException("Unable to update user");
         }
-        User user=userRepository.findByUsername(userDto.getUsername());
+        User user = userRepository.findByUsername(userDto.getUsername());
         user.setLastName(userDto.getLastName());
         user.setName(userDto.getName());
         user.setUsername(userDto.getUsername());
@@ -130,48 +128,68 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User activateUser(String code) {
-        User user=userRepository.findByActivationCode(code);
-        if(user ==null)
-        {
-            throw new IllegalArgumentException("Invalid user activation code");
+        User user = userRepository.findByActivationCode(code);
+        try {
+            if (user == null) {
+                throw new IllegalArgumentException("Invalid user activation code");
+            }
+            user.setActivationCode(null);
+            user.setLastPasswordResetDate(new Date());
+            user.setActivate(true);
+            User activatedUser = userRepository.save(user);
+            return activatedUser;
         }
-        user.setActivationCode(null);
-        user.setLastPasswordResetDate(new Date());
-        user.setActivate(true);
-        User activatedUser=userRepository.save(user);
-        return activatedUser;
+        catch (IllegalArgumentException ex)
+        {
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND, "Invalid user activation code", ex);
+        }
+
     }
 
     @Override
     public ImagePath updatePhoto(MultipartFile file, String username) {
-        User user=userRepository.findByUsername(username);
-        if(user==null || !user.getUsername().equals(getUsernameOfCurrentUser()) || file==null || file.getOriginalFilename().isEmpty())
-        {
-            throw new IllegalArgumentException("Problems with updating photos");
-        }
-        File uploadDir = new File(uploadPath);
-        if (!uploadDir.exists()) {
-            uploadDir.mkdir();
-        }
-        String uuidFile = UUID.randomUUID().toString();
-        String resultFilename = uuidFile + "." + file.getOriginalFilename();
+        User user = userRepository.findByUsername(username);
         try {
-            file.transferTo(new File(uploadPath + "/" + resultFilename));
-            user.setPhotoUrl(resultFilename);
-        } catch (IOException e) {
-            e.printStackTrace();
+
+            if (file == null || file.getOriginalFilename().isEmpty()) {
+                throw new IllegalArgumentException("Problems with updating photos");
+            }
+            else if(user == null || !user.getUsername().equals(getUsernameOfCurrentUser()))
+            {
+                throw new AccessException("Access denied");
+            }
+            File uploadDir = new File(uploadPath);
+            if (!uploadDir.exists()) {
+                uploadDir.mkdir();
+            }
+            String uuidFile = UUID.randomUUID().toString();
+            String resultFilename = uuidFile + "." + file.getOriginalFilename();
+            try {
+                file.transferTo(new File(uploadPath + "/" + resultFilename));
+                user.setPhotoUrl(resultFilename);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } catch (IllegalArgumentException ex) {
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND, "Photo can't be updated", ex);
+        }
+        catch(AccessException ex)
+        {
+            throw new ResponseStatusException(
+                    HttpStatus.FORBIDDEN, "Access denied", ex);
         }
 
 
         return new ImagePath(userRepository.save(user).getPhotoUrl());
     }
 
-    private String getUsernameOfCurrentUser()
-    {
+    private String getUsernameOfCurrentUser() {
         String username;
-        Object principal= SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if (principal instanceof UserDetails) {
-            username = ((UserDetails)principal).getUsername();
+            username = ((UserDetails) principal).getUsername();
         } else {
             username = principal.toString();
         }

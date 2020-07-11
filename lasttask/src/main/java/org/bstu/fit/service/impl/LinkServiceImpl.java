@@ -47,8 +47,8 @@ public class LinkServiceImpl implements LinkService {
     }
 
     @Override
-    public LinkPageDto getAllLinksForAuthUser(Pageable pageable) {
-        Page<Link> linksPage=linkRepository.findByStatus(pageable);
+    public LinkPageDto getAllLinksForAuthUser(long userId,Pageable pageable) {
+        Page<Link> linksPage=linkRepository.findByStatus(userId,pageable);
         return getLinkPageDto(linksPage,pageable);
     }
 

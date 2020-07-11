@@ -1,0 +1,98 @@
+<app-navigation></app-navigation>
+<div class="row" style="margin-top:5em">
+  <div class="col-sm-3 d-inline ml-5">
+    <img class="img-fluid rounded d-inline" [src]="getUrl()" style="max-width: 10em;"/>
+  </div>
+
+  <div class="cols-sm-8 float-left ml-4">
+    <p class="text-dark d-inline">@{{currentUser.username}}</p>
+    <div class="d-flex  mt-4">
+      <div class="col-sm-1">
+
+      </div>
+      <div class="col-sm-3 d-flex">
+        <button *ngIf="pageOfCurrentUser" mat-raised-button (click)="editProfile()">Edit profile</button>
+        <form *ngIf="isFormVisible" [formGroup]="registrationForm">
+          <div class="input-group p-1">
+            <div class="input-group-prepend ">
+              <span class="input-group-text" id="basic-addon1">@</span>
+            </div>
+            <input formControlName="userName" type="text" class="form-control" placeholder="Username"
+                   aria-label="Username"
+                   aria-describedby="basic-addon1">
+
+          </div>
+          <div class="alert alert-danger"
+               *ngIf="registrationForm.controls['userName'].invalid && registrationForm.controls['userName'].touched">
+            Incorrect username
+          </div>
+          <div class="input-group p-1">
+            <div class="input-group-prepend">
+              <span class="input-group-text" id="basic-addon2"><i class="fas fa-envelope-square"></i></span>
+            </div>
+
+            <div class="input-group p-1">
+              <div class="input-group-prepend">
+                    <span class="input-group-text" id="basic-addon4">
+
+                        <i class="fas fa-info"></i>
+
+
+                    </span>
+              </div>
+              <input type="text" class="form-control" formControlName="firstName" placeholder="First name">
+              <input type="text" class="form-control" formControlName="lastName" placeholder="Last name">
+
+            </div>
+            <div class="alert alert-danger"
+                 *ngIf="(registrationForm.controls['lastName'].invalid && registrationForm.controls['lastName'].touched) || (registrationForm.controls['firstName'].invalid && registrationForm.controls['firstName'].touched)">
+
+              Required field
+            </div>
+            <div class="input-group p-1">
+              <div class="input-group-prepend">
+                    <span class="input-group-text" id="basic-addon5"><i class="fas fa-unlock"></i>
+                    </span>
+              </div>
+              <input type="password" formControlName="password" class="form-control" placeholder="Password"
+                     aria-label="Email"
+                     aria-describedby="basic-addon5">
+            </div>
+            <div class="input-group p-1">
+              <div class="input-group-prepend">
+                    <span class="input-group-text" id="basic-addon6"><i class="fas fa-lock-open"></i>
+
+
+                    </span>
+              </div>
+              <input type="password" class="form-control" formControlName="confirmPassword"
+                     placeholder="Confirm password" aria-label="Email"
+                     aria-describedby="basic-addon6">
+
+            </div>
+            <div class="alert alert-danger"
+                 *ngIf="(registrationForm.controls['confirmPassword'].invalid && registrationForm.controls['confirmPassword'].touched) || (registrationForm.controls['password'].invalid && registrationForm.controls['password'].touched && registrationForm.valid)">
+              Required field
+            </div>
+          </div>
+        </form>
+        <div class=" p-1">
+          <button *ngIf="!registrationForm.valid" disabled="disabled" class="btn btn-dark btn-block">Register</button>
+          <button *ngIf="registrationForm.valid" class="btn btn-info btn-block" (click)="registerUser()">Register
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+<div *ngIf="links.length!==0">
+  <div *ngFor="let item of links">
+    <app-item-link class="justify-content-center d-flex col-8"
+                   [link]="item">
+
+    </app-item-link>
+  </div>
+  <ngb-pagination [collectionSize]="totalItems" [pageSize]="itemsPerPage" [(page)]="page" [maxSize]="7"
+                  [rotate]="true" (pageChange)="loadPage($event)"></ngb-pagination>
+</div>

@@ -1,25 +1,14 @@
 <app-navigation></app-navigation>
 <div class="row">
   <div class="col-sm-8">
-    <span *ngFor="let item of posts">
-      <app-item-link [author]="item.authorLogin"
-                [description]="item.text"
-                [date]="item.date"
-                [_hashTags]="item.hashTags"
-                [src]="item.photoPath"
-                [authorPhotoPath]="item.authorPhotoPath"
-                [id]="item.id"
-                [_authorId]="item.authorId"></app-item-link>
+    <span *ngFor="let item of links">
+      <app-item-link [link]="item" ]></app-item-link>
     </span>
 
 
   </div>
 
-  <div class="col-sm-1">
-  </div>
-  <div class="col-sm-3">
-    <app-story-menu></app-story-menu>
-  </div>
+
 
 </div>
 <ngb-pagination [collectionSize]="totalItems" [pageSize]="itemsPerPage" [(page)]="page" [maxSize]="7" [rotate]="true"

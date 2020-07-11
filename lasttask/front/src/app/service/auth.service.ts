@@ -5,6 +5,7 @@ import {UserService} from './user.service';
 import {UserLogin} from '../model/user-login';
 import {JwtHelperService} from '@auth0/angular-jwt';
 import {User} from '../model/user';
+import {MatSnackBar} from '@angular/material/snack-bar';
 @Injectable({
   providedIn: 'root'
 })
@@ -12,7 +13,8 @@ export class AuthService {
 
   constructor(private http: HttpClient,
               private userService: UserService,
-              private router: Router) {
+              private router: Router,
+              private _snackBar: MatSnackBar) {
   }
 
   public getToken(): string {
@@ -41,9 +43,15 @@ export class AuthService {
         };
         this.userService.activeUser.next(user);
         this.router.navigate(['/story']);
+      },error => {
+        this.openSnackBar(error.message,"Close");
       });
   }
-
+  openSnackBar(message: string, action: string) {
+    this._snackBar.open(message, action, {
+      duration: 2000,
+    });
+  }
   logout() {
     localStorage.removeItem('token');
     this.userService.activeUser.next(null);
@@ -55,4 +63,5 @@ export class AuthService {
   //   const token = this.getToken();
   //   return tokenNotExpired(null, token);
   // }
+
 }

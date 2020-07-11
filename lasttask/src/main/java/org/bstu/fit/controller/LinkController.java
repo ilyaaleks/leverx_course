@@ -26,10 +26,10 @@ public class LinkController {
     {
         return ResponseEntity.ok(linkService.getAllPublicLinks(pageable));
     }
-    @GetMapping("/protected")
-    public ResponseEntity<LinkPageDto> getAllLinksForAuthUser(Pageable pageable)
+    @GetMapping("/protected/{userId}")
+    public ResponseEntity<LinkPageDto> getAllLinksForAuthUser(@PathVariable long userId, Pageable pageable)
     {
-        return ResponseEntity.ok(linkService.getAllLinksForAuthUser(pageable));
+        return ResponseEntity.ok(linkService.getAllLinksForAuthUser(userId,pageable));
     }
     @GetMapping
     public ResponseEntity<LinkPageDto> getAllUserLinks(Pageable pageable)
@@ -37,7 +37,7 @@ public class LinkController {
         return ResponseEntity.ok(linkService.getAllUserLinks(pageable));
     }
     @PutMapping
-    public ResponseEntity<LinkDto> update(LinkDto linkDto)
+    public ResponseEntity<LinkDto> update(@RequestBody LinkDto linkDto)
     {
         Link link=linkService.update(linkDto);
         return ResponseEntity.ok(LinkMapper.INSTANCE.toDTO(link));

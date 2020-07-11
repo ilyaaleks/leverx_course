@@ -24,7 +24,7 @@ public class ImageController {
     }
 
     @PostMapping
-    public ResponseEntity<ImagePath> updatePhoto(@RequestParam(name = "file") MultipartFile file, @PathVariable String username)
+    public ResponseEntity<ImagePath> updatePhoto(@RequestParam(name = "file") MultipartFile file, @RequestParam("username") String username)
     {
         return ResponseEntity.ok(userService.updatePhoto(file,username));
     }

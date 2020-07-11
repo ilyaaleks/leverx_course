@@ -5,11 +5,12 @@ import {MainWindowComponent} from '../components/main-window/main-window.compone
 import {RegistrationComponent} from '../components/registration/registration.component';
 import {LinkPageComponent} from '../components/link-page/link-page.component';
 import {AuthGuard} from '../guard/auth.guard';
+import {AboutUserComponent} from '../components/about-user/about-user.component';
 
 
 const appRoutes: Routes = [
   {path: 'home', component: MainWindowComponent},
-  // {path: 'user/:id', component: AboutUserComponent, canActivate: [AuthGuard]},
+  {path: 'user/:id', component: AboutUserComponent, canActivate: [AuthGuard]},
   // {path: 'signout', component: MainComponent},
   {path: 'registration', component: RegistrationComponent},
   {path: 'story', component: LinkPageComponent, canActivate: [AuthGuard]},

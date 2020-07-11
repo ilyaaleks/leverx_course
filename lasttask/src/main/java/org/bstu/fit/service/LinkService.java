@@ -9,7 +9,7 @@ import org.springframework.data.domain.Pageable;
 public interface LinkService {
     Link save(LinkDto linkDto);
     LinkPageDto getAllPublicLinks(Pageable pageable);
-    LinkPageDto getAllLinksForAuthUser(Pageable pageable);
+    LinkPageDto getAllLinksForAuthUser(long userId,Pageable pageable);
     LinkPageDto getAllUserLinks(Pageable pageable);
     Link update(LinkDto linkDto);
     void delete(long linkId);

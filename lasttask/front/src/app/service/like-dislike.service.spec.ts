@@ -1,13 +1,13 @@
 import { TestBed } from '@angular/core/testing';
 
-import { LinkService } from './link.service';
+import { LikeDislikeService } from './like-dislike.service';
 
-describe('LinkService', () => {
-  let service: LinkService;
+describe('LikeDislikeService', () => {
+  let service: LikeDislikeService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({});
-    service = TestBed.inject(LinkService);
+    service = TestBed.inject(LikeDislikeService);
   });
 
   it('should be created', () => {

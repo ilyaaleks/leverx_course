@@ -1,1 +1,30 @@
-<p>navigation works!</p>
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <div class="container">
+    <a class="navbar-brand" href="Index.html" routerLink="/story">Instagram</a>
+    <button class="navbar-toggler" type="button" data-target="#my-nav" data-toggle="collapse">
+      <span class="navbar-toggler-icon">INSTAGRAM</span>
+    </button>
+
+    <div id="my-nav" class="collapse navbar-collapse justify-content-end">
+      <ul class="nav navbar-nav mx-auto">
+        <li>
+
+        </li>
+      </ul>
+      <ul class="navbar-nav">
+        <li class="nav-item">
+          <a class="nav-link" (click)="openDialog()">Add link</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link" (click)="openAboutUser()">About</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link" (click)="signout()">Sign out</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+</nav>
