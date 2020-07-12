@@ -19,6 +19,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
 import javax.naming.AuthenticationException;
+import javax.validation.Valid;
 
 @RestController
 @RequestMapping("api/auth")
@@ -33,7 +34,7 @@ public class AuthenticationController {
     }
 
     @PostMapping("/token")
-    public ResponseEntity register(@RequestBody LoginPasswordUser loginUser) {
+    public ResponseEntity register(@Valid @RequestBody LoginPasswordUser loginUser) {
         final Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         loginUser.getUsername(),

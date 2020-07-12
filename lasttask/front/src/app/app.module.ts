@@ -23,7 +23,6 @@ import { CommentComponent } from './components/comment/comment.component';
 import { AboutUserComponent } from './components/about-user/about-user.component';
 import { AddLinkComponent } from './components/add-link/add-link.component';
 import {MatRadioModule} from '@angular/material/radio';
-import { EditUserComponent } from './components/edit-user/edit-user.component';
 
 @NgModule({
   declarations: [
@@ -36,7 +35,6 @@ import { EditUserComponent } from './components/edit-user/edit-user.component';
     CommentComponent,
     AboutUserComponent,
     AddLinkComponent,
-    EditUserComponent
   ],
     imports: [
         BrowserModule,

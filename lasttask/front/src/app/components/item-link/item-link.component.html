@@ -1,6 +1,6 @@
 <div class="card img_wrap">
   <div class="card-header border-success">
-    <h6 class="ml-3 mt-3 card-title float-left"><a [href]="authorId">{{link.user.username}}</a></h6>
+    <h6 class="ml-3 mt-3 card-title float-left"><a [href]="authorId()">{{link.user.username}}</a></h6>
     <i *ngIf="activeUser" (click)="deleteLink()" class="far fa-trash-alt float-right "></i>
     <i *ngIf="activeUser" (click)="updateLink()" class="far fa-edit float-right mr-2"></i>
   </div>

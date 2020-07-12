@@ -37,7 +37,7 @@ export class AddLinkComponent implements OnInit {
     })
     ;
     if (this.data !== null) {
-      let link: Link = this.data.link;
+      let link: Link = this.data;
       this.postForm.controls['link'].setValue(link.url);
       this.postForm.controls['name'].setValue(link.name);
       let resultStr = '';
@@ -96,7 +96,7 @@ export class AddLinkComponent implements OnInit {
   public update() {
     this.userService.activeUser.subscribe((user: User) => {
       let post: Link = {
-        id: this.data.link.id,
+        id: this.data.id,
         name: this.postForm.controls['name'].value,
         url: this.postForm.controls['link'].value,
         user: user,

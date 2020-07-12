@@ -16,7 +16,6 @@ public class LinkDto {
     private String url;
     private Status status;
     private Set<TagDto> tags;
-    private Set<CommentDto> comments;
     private long countOfLikes;
     private long countOfDislikes;
     private UserDto user;

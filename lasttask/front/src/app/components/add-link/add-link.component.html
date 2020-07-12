@@ -12,19 +12,18 @@
       <div class="input-group p-1">
         <input matInput  formControlName="name" placeholder="write a name"><!--class="form-control"-->
       </div>
-      <div class="input-group p-1">
-        <mat-radio-group *ngIf="data===null" formControlName="status" aria-label="Select an status">
-          <mat-radio-button *ngIf="data===null" value="public">Public</mat-radio-button>
-          <mat-radio-button *ngIf="data===null" value="protected">Protected</mat-radio-button>
-          <mat-radio-button *ngIf="data===null" value="private">Private</mat-radio-button>
+      <div  *ngIf="data===null" class="input-group p-1">
+        <mat-radio-group  formControlName="status" aria-label="Select an status">
+          <mat-radio-button value="public">Public</mat-radio-button>
+          <mat-radio-button value="protected">Protected</mat-radio-button>
+          <mat-radio-button value="private">Private</mat-radio-button>
         </mat-radio-group>
       </div>
 
     </div>
     <div class=" p-1">
       <button *ngIf="postForm.valid && data===null"  mat-raised-button color="accent" [mat-dialog-close]="true" (click)="addPost()">Add link</button>
-      <button *ngIf="postForm.valid && data!==null"   mat-raised-button color="accent" [mat-dialog-close]="true" (click)="update()">Update</button>
-      <button *ngIf="!postForm.valid" disabled="disabled" >Add post</button>
+      <button *ngIf="data!==null"   mat-raised-button color="accent" [mat-dialog-close]="true" (click)="update()">Update</button>
     </div>
   </form>
 </div>

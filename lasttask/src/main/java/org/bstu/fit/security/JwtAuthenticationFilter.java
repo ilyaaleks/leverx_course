@@ -18,17 +18,9 @@ import java.io.IOException;
 
 //This class checks for the authorization header and authenticates the JWT token and sets the authentication in the context.
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
+    public TokenProvider tokenProvider;
+    public MyUserDetailsService userDetailsService;
 
-    private TokenProvider tokenProvider;
-    private MyUserDetailsService userDetailsService;
-
-    public JwtAuthenticationFilter(TokenProvider tokenProvider, MyUserDetailsService userDetailsService) {
-        this.tokenProvider = tokenProvider;
-        this.userDetailsService = userDetailsService;
-    }
-
-    public JwtAuthenticationFilter() {
-    }
 
     @Override
     protected void doFilterInternal(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, FilterChain filterChain) throws ServletException, IOException {
@@ -62,5 +54,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
 
         filterChain.doFilter(httpServletRequest, httpServletResponse);
+    }
+
+    @Autowired
+    public void setTokenProvider(TokenProvider tokenProvider) {
+        this.tokenProvider = tokenProvider;
+    }
+
+    @Autowired
+    public void setUserDetailsService(MyUserDetailsService userDetailsService) {
+        this.userDetailsService = userDetailsService;
     }
 }

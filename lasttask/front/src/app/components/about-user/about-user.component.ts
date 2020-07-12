@@ -8,6 +8,7 @@ import {MatDialog} from '@angular/material/dialog';
 import {LinkPageDto} from '../../model/link-page-dto';
 import {FormControl, FormGroup, ValidatorFn, Validators} from '@angular/forms';
 import {MatSnackBar} from '@angular/material/snack-bar';
+import {PhotoPath} from '../../model/photo-path';
 
 @Component({
   selector: 'app-about-user',
@@ -15,18 +16,23 @@ import {MatSnackBar} from '@angular/material/snack-bar';
   styleUrls: ['./about-user.component.css']
 })
 export class AboutUserComponent implements OnInit {
-  private currentUser: User;
+  public currentUser: User;
+  public photoForm: FormGroup;
   itemsPerPage: number = 20;
   totalItems: any;
   page: any;
   previousPage: any;
-  private links: Link[];
-  private pageOfCurrentUser: boolean;
-  private requestUserId: number;
-  private currentUserPage: User;
-  private isFormVisible: boolean = false;
+  public links: Link[];
+  public pageOfCurrentUser: boolean;
+  public requestUserId: number;
+  public currentUserPage: User;
+  public isFormVisible: boolean = false;
   public registrationForm: FormGroup;
-
+  fileToUpload: File = null;
+  public onFileChange(files: FileList)
+  {
+    this.fileToUpload = files.item(0);
+  }
   constructor(private activatedRoute: ActivatedRoute,
               private userService: UserService,
               private linkService: LinkService,
@@ -34,6 +40,9 @@ export class AboutUserComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.photoForm = new FormGroup({
+      file: new FormControl(null, [Validators.required])
+    })
     this.activatedRoute.paramMap.subscribe(
       (params: ParamMap) => {
         this.userService.activeUser.subscribe((currentUser: User) => {
@@ -91,8 +100,6 @@ export class AboutUserComponent implements OnInit {
       }
     });
     this.registrationForm = new FormGroup({
-      userName: new FormControl('', Validators.required),
-      email: new FormControl('', [Validators.required, Validators.pattern('[a-z0-9!#$%&\'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&\'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?')]),
       firstName: new FormControl('', Validators.required),
       lastName: new FormControl('', Validators.required),
       password: new FormControl('', [Validators.required]),
@@ -132,7 +139,7 @@ export class AboutUserComponent implements OnInit {
 
   getUrl() {
     if (this.currentUserPage != null) {
-      return 'http://localhost:8080/api/image/' + this.currentUserPage.photoUrl;
+      return 'http://localhost:8080/lasttask_war_exploded/api/image/' + this.currentUserPage.photoUrl+"/";
     }
   }
 
@@ -145,7 +152,7 @@ export class AboutUserComponent implements OnInit {
       id: this.currentUserPage.id,
       name: this.registrationForm.controls['firstName'].value,
       lastName: this.registrationForm.controls['lastName'].value,
-      username: this.registrationForm.controls['userName'].value,
+      username: this.currentUserPage.username,
       photoUrl: null,
       email:null,
       links: null,
@@ -164,5 +171,10 @@ export class AboutUserComponent implements OnInit {
       duration: 2000,
     });
   }
-
+  updatePhoto()
+  {
+    this.userService.updatePhoto(this.fileToUpload, this.currentUserPage.username).subscribe((photoPath:PhotoPath)=>{
+      this.currentUserPage.photoUrl=photoPath.photoPath;
+    });
+  }
 }

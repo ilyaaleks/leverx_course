@@ -11,5 +11,4 @@ import java.util.Set;
 public class TagDto {
     private long id;
     private String name;
-    private Set<LinkDto> links;
 }

@@ -16,8 +16,6 @@ public class UserDto {
     private String username;
     private String email;
     private String photoUrl;
-    private Set<LinkDto> links;
-    private Set<CommentDto> comments;
     private boolean activate;
     private String activationCode;
     private String password;

@@ -1,8 +1,14 @@
 <app-navigation></app-navigation>
 <div class="row" style="margin-top:5em">
+
   <div class="col-sm-3 d-inline ml-5">
     <img class="img-fluid rounded d-inline" [src]="getUrl()" style="max-width: 10em;"/>
+    <form [formGroup]="photoForm">
+      <input type="file" name="file" formControlName="file" (change)="onFileChange($event.target.files)">
+      <button *ngIf="photoForm.valid" class="btn btn-dark btn-block" (click)="updatePhoto()">Update Photo</button>
+    </form>
   </div>
+
 
   <div class="cols-sm-8 float-left ml-4">
     <p class="text-dark d-inline">@{{currentUser.username}}</p>
@@ -10,26 +16,12 @@
       <div class="col-sm-1">
 
       </div>
-      <div class="col-sm-3 d-flex">
-        <button *ngIf="pageOfCurrentUser" mat-raised-button (click)="editProfile()">Edit profile</button>
-        <form *ngIf="isFormVisible" [formGroup]="registrationForm">
+      <div class="col-sm-8 d-flex">
+        <button *ngIf="pageOfCurrentUser && !isFormVisible" mat-raised-button (click)="editProfile()">Edit profile
+        </button>
+        <form *ngIf="isFormVisible" [formGroup]="registrationForm" style="width: 400px">
           <div class="input-group p-1">
-            <div class="input-group-prepend ">
-              <span class="input-group-text" id="basic-addon1">@</span>
-            </div>
-            <input formControlName="userName" type="text" class="form-control" placeholder="Username"
-                   aria-label="Username"
-                   aria-describedby="basic-addon1">
 
-          </div>
-          <div class="alert alert-danger"
-               *ngIf="registrationForm.controls['userName'].invalid && registrationForm.controls['userName'].touched">
-            Incorrect username
-          </div>
-          <div class="input-group p-1">
-            <div class="input-group-prepend">
-              <span class="input-group-text" id="basic-addon2"><i class="fas fa-envelope-square"></i></span>
-            </div>
 
             <div class="input-group p-1">
               <div class="input-group-prepend">
@@ -77,8 +69,11 @@
           </div>
         </form>
         <div class=" p-1">
-          <button *ngIf="!registrationForm.valid" disabled="disabled" class="btn btn-dark btn-block">Register</button>
-          <button *ngIf="registrationForm.valid" class="btn btn-info btn-block" (click)="registerUser()">Register
+          <button *ngIf="!registrationForm.valid && isFormVisible" disabled="disabled" class="btn btn-dark btn-block">
+            Edit Profile
+          </button>
+          <button *ngIf="registrationForm.valid && isFormVisible" class="btn btn-info btn-block"
+                  (click)="registerUser()">Edit Profile
           </button>
         </div>
       </div>

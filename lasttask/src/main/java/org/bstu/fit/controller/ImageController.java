@@ -24,14 +24,14 @@ public class ImageController {
     }
 
     @PostMapping
-    public ResponseEntity<ImagePath> updatePhoto(@RequestParam(name = "file") MultipartFile file, @RequestParam("username") String username)
+    public ResponseEntity<ImagePath> updatePhoto(@RequestParam MultipartFile file, @RequestParam String username)
     {
         return ResponseEntity.ok(userService.updatePhoto(file,username));
     }
-    @GetMapping("/{name}")
-    @ResponseBody
-    public ResponseEntity<byte[]> getPhoto(@PathVariable() String name) throws IOException {
-        return ResponseEntity.ok(imageService.getPhoto(name));
-    }
+//    @GetMapping("/{name}")
+//    @ResponseBody
+//    public ResponseEntity<byte[]> getPhoto(@PathVariable String name) throws IOException {
+//        return ResponseEntity.ok(imageService.getPhoto(name));
+//    }
 
 }

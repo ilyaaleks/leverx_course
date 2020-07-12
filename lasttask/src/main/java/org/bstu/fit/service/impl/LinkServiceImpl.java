@@ -14,6 +14,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 
@@ -30,11 +31,10 @@ public class LinkServiceImpl implements LinkService {
     }
 
     @Override
+    @Transactional
     public Link save(LinkDto linkDto) {
         Link link=LinkMapper.INSTANCE.fromDTO(linkDto);
-        Set<Tag> tagOfCurrentLink=new HashSet<>();
-        iterateTags(link,tagOfCurrentLink);
-        link.setTags(tagOfCurrentLink);
+        iterateTags(link);
         link.setUser(userRepository.findByUsername(getUsernameOfCurrentUser()));
         link.setDateOfCreation(new Date());
         return linkRepository.save(link);
@@ -66,9 +66,7 @@ public class LinkServiceImpl implements LinkService {
             throw new IllegalArgumentException("Link not found or you dont't have access");
         }
         Link updatedLink=LinkMapper.INSTANCE.fromDTO(linkDto);
-        Set<Tag> tagOfCurrentLink=new HashSet<>();
-        iterateTags(updatedLink,tagOfCurrentLink);
-        link.setTags(tagOfCurrentLink);
+        iterateTags(updatedLink);
         link.setDateOfChange(new Date());
         link.setName(linkDto.getName());
         link.setUrl(linkDto.getUrl());
@@ -76,11 +74,12 @@ public class LinkServiceImpl implements LinkService {
     }
 
     @Override
+    @Transactional
     public void delete(long linkId) {
         Link link=linkRepository.findById(linkId);
         if(link!=null && link.getUser().getUsername().equals(getUsernameOfCurrentUser()))
         {
-            linkRepository.deleteById(linkId);
+            linkRepository.deleteById(Long.valueOf(linkId));
         }
         else
         {
@@ -99,8 +98,9 @@ public class LinkServiceImpl implements LinkService {
         LinkPageDto linkPageDto=new LinkPageDto(linkDtos,pageable.getPageNumber(),linksPage.getTotalPages());
         return linkPageDto;
     }
-    private void iterateTags(Link link,Set<Tag> tagOfCurrentLink)
+    private void iterateTags(Link link)
     {
+        Set<Tag> tagSet=new HashSet<>();
         for(Tag tag: link.getTags())
         {
             Tag currentTag=tagRepository.findByName(tag.getName());
@@ -108,8 +108,11 @@ public class LinkServiceImpl implements LinkService {
             {
                 currentTag=tagRepository.save(tag);
             }
-            tagOfCurrentLink.add(currentTag);
+            tagSet.add(currentTag);
         }
+        link.setTags(tagSet);
+        Link savedLink=linkRepository.save(link);
+
     }
     private String getUsernameOfCurrentUser()
     {

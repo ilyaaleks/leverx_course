@@ -70,7 +70,7 @@ export class UserService {
     const formData:FormData=new FormData();
     formData.append('file',file);
     formData.append('username',username);
-    return this.httpClient.post<PhotoPath>("/api/user",formData);
+    return this.httpClient.post<PhotoPath>("/api/image",formData);
   }
   getUserById(id:number):Observable<User>
   {

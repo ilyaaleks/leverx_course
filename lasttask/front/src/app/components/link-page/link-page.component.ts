@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {Link} from '../../model/link';
 import {LinkService} from '../../service/link.service';
 import {ActivatedRoute} from '@angular/router';
@@ -16,18 +16,43 @@ export class LinkPageComponent implements OnInit {
   totalItems: any;
   page: any;
   previousPage: any;
-  private links: Link[];
+  public links: Link[];
+
   constructor(private linkService: LinkService,
               private activatedRoute: ActivatedRoute,
-              private userService: UserService) { }
+              private userService: UserService) {
+  }
 
   ngOnInit(): void {
+    this.activatedRoute.paramMap.subscribe((params) => {
+
+      if (params.get('tag') !== null) {
+        // this.linkService.getPostsByTag(params.get("tag"), page - 1).subscribe((postPages: PostPageDto) => {
+        //   this.totalItems = postPages.totalPage * this.itemsPerPage;
+        //   this.page = 1;
+        //   this.posts = postPages.posts;
+        // })
+      } else {
+        this.userService.activeUser.subscribe((user: User) => {
+          this.linkService.getAllLinksForAuthUser(0, user.id).subscribe(
+            (linksPage: LinkPageDto) => {
+              this.links = linksPage.links;
+              this.totalItems = linksPage.totalPage * this.itemsPerPage;
+              this.page = linksPage.currentPage + 1;
+            }
+          );
+        });
+
+      }
+
+    });
   }
+
   loadPage(page: number) {
     this.activatedRoute.paramMap.subscribe((params) => {
       if (page !== this.previousPage) {
         this.previousPage = page;
-        if (params.get("tag") !== null) {
+        if (params.get('tag') !== null) {
           // this.linkService.getPostsByTag(params.get("tag"), page - 1).subscribe((postPages: PostPageDto) => {
           //   this.totalItems = postPages.totalPage * this.itemsPerPage;
           //   this.page = 1;
@@ -42,10 +67,10 @@ export class LinkPageComponent implements OnInit {
                 this.page = linksPage.currentPage + 1;
               }
             );
-          })
+          });
 
         }
       }
-    })
+    });
   }
 }

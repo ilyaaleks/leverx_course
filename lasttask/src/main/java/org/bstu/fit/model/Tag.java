@@ -1,10 +1,9 @@
 package org.bstu.fit.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
 import java.util.Set;
 
 @Data
@@ -15,12 +14,10 @@ public class Tag {
     @Id
     @GeneratedValue(strategy= GenerationType.AUTO)
     private long id;
+    @NotBlank(message = "You need to fill name")
     private String name;
-    @ManyToMany
-    @JoinTable(
-            name = "tag_table",
-            joinColumns = {@JoinColumn(name = "tag_id")},
-            inverseJoinColumns = {@JoinColumn(name = "link_id")}
-    )
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
+    @ManyToMany(mappedBy = "tags", cascade  = { CascadeType.MERGE, CascadeType.REFRESH, CascadeType.DETACH, CascadeType.REMOVE}, fetch = FetchType.EAGER)
     private Set<Link> links;
 }

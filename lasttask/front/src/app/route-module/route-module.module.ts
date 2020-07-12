@@ -11,16 +11,16 @@ import {AboutUserComponent} from '../components/about-user/about-user.component'
 const appRoutes: Routes = [
   {path: 'home', component: MainWindowComponent},
   {path: 'user/:id', component: AboutUserComponent, canActivate: [AuthGuard]},
-  // {path: 'signout', component: MainComponent},
+  {path: 'signout', component: MainWindowComponent},
   {path: 'registration', component: RegistrationComponent},
   {path: 'story', component: LinkPageComponent, canActivate: [AuthGuard]},
-  // {
-  //   path: '', redirectTo: '/home', pathMatch: 'full'
-  // },
-  // {path: 'story/:tag', component: ActivityComponent, canActivate: [AuthGuard]},
-  // {
-  //   path: '**', component: MainComponent
-  // }
+  {
+    path: '', redirectTo: '/home', pathMatch: 'full'
+  },
+  {path: 'story/:tag', component: LinkPageComponent, canActivate: [AuthGuard]},
+  {
+    path: '**', component: MainWindowComponent
+  }
 
 ];
 

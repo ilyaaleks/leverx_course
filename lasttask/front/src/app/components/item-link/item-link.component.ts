@@ -20,10 +20,10 @@ import {CommentPageDto} from '../../model/comment-page-dto';
 export class ItemLinkComponent implements OnInit {
   @Input()
   link: Link;
-  private comments:Comment[];
-  private activeUser: boolean;
-  private countOfLikes: number;
-  private countOfDislike: number;
+  public comments:Comment[];
+  public activeUser: boolean;
+  public countOfLikes: number;
+  public countOfDislike: number;
   public commentForm: FormGroup;
   itemsPerPage: number = 20;
   totalItems: any;
@@ -49,6 +49,11 @@ export class ItemLinkComponent implements OnInit {
     this.commentForm = new FormGroup({
       comment: new FormControl('', [Validators.required])
     });
+    this.commentService.getCommentsForLink(this.link.id, 0).subscribe((commentPage: CommentPageDto) => {
+      this.totalItems = commentPage.totalPage*this.itemsPerPage;
+      this.page = 1;
+      this.comments = commentPage.comments;
+    });
   }
 
   public deleteLink() {
@@ -58,7 +63,7 @@ export class ItemLinkComponent implements OnInit {
   public updateLink() {
     const dialogConfig = new MatDialogConfig();
     dialogConfig.width = '50%';
-    dialogConfig.data.link = this.link;
+    dialogConfig.data = this.link;
     this.dialog.open(AddLinkComponent, dialogConfig);
   }
 

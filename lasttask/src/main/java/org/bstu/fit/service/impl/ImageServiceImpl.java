@@ -9,12 +9,12 @@ import java.io.IOException;
 import java.nio.file.Files;
 
 @Service
-public class ImageServiceImpl implements ImageService {
+public class    ImageServiceImpl implements ImageService {
     @Value("${upload.path}")
     private String baseDir;
     @Override
     public byte[] getPhoto(String name) {
-        File imgPath= new File(baseDir+name);
+        File imgPath= new File(baseDir+"/"+name);
         byte[] image=null;
         try {
              image= Files.readAllBytes(imgPath.toPath());
