@@ -14,6 +14,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+
 @RestController
 @RequestMapping("api/user")
 public class UserController {
@@ -28,7 +30,7 @@ public class UserController {
     }
 
     @PutMapping
-    public ResponseEntity<AuthToken> updateUser(@RequestBody UserDto userDto)
+    public ResponseEntity<AuthToken> updateUser(@Valid @RequestBody UserDto userDto)
     {
         User user=userService.updateUser(userDto);
         final Authentication authentication = authenticationManager.authenticate(

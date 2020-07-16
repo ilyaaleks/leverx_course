@@ -3,7 +3,7 @@
 
   <div class="col-sm-3 d-inline ml-5">
     <img class="img-fluid rounded d-inline" [src]="getUrl()" style="max-width: 10em;"/>
-    <form [formGroup]="photoForm">
+    <form *ngIf="pageOfCurrentUser" [formGroup]="photoForm">
       <input type="file" name="file" formControlName="file" (change)="onFileChange($event.target.files)">
       <button *ngIf="photoForm.valid" class="btn btn-dark btn-block" (click)="updatePhoto()">Update Photo</button>
     </form>
@@ -11,7 +11,7 @@
 
 
   <div class="cols-sm-8 float-left ml-4">
-    <p class="text-dark d-inline">@{{currentUser.username}}</p>
+    <p class="text-dark d-inline">@{{currentUserPage.username}}</p>
     <div class="d-flex  mt-4">
       <div class="col-sm-1">
 
@@ -83,7 +83,7 @@
 </div>
 <div *ngIf="links.length!==0">
   <div *ngFor="let item of links">
-    <app-item-link class="justify-content-center d-flex col-8"
+    <app-item-link class="justify-content-center d-flex col-10"
                    [link]="item">
 
     </app-item-link>

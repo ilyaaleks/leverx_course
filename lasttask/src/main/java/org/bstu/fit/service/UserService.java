@@ -16,4 +16,5 @@ public interface UserService {
     User updateUser(UserDto user);
     User activateUser(String code);
     ImagePath updatePhoto(MultipartFile file,String username);
+    User findByEmail(String email);
 }

@@ -20,10 +20,8 @@ import {CommentPageDto} from '../../model/comment-page-dto';
 export class ItemLinkComponent implements OnInit {
   @Input()
   link: Link;
-  public comments:Comment[];
+  public comments: Comment[];
   public activeUser: boolean;
-  public countOfLikes: number;
-  public countOfDislike: number;
   public commentForm: FormGroup;
   itemsPerPage: number = 20;
   totalItems: any;
@@ -35,7 +33,8 @@ export class ItemLinkComponent implements OnInit {
               private commentService: CommentService,
               private likeService: LikeDislikeService,
               private linkService: LinkService,
-              private _snackBar: MatSnackBar) {
+              private _snackBar: MatSnackBar,
+              ) {
   }
 
   ngOnInit(): void {
@@ -50,10 +49,17 @@ export class ItemLinkComponent implements OnInit {
       comment: new FormControl('', [Validators.required])
     });
     this.commentService.getCommentsForLink(this.link.id, 0).subscribe((commentPage: CommentPageDto) => {
-      this.totalItems = commentPage.totalPage*this.itemsPerPage;
+      this.totalItems = commentPage.totalPage * this.itemsPerPage;
       this.page = 1;
       this.comments = commentPage.comments;
     });
+    this.linkService.updatedLink.subscribe((link: Link) => {
+      if (link !== null&& link.id===this.link.id) {
+        this.link = link;
+        this.linkService.updatedLink.next(null);
+      }
+    });
+
   }
 
   public deleteLink() {
@@ -72,18 +78,24 @@ export class ItemLinkComponent implements OnInit {
   }
 
   setLike(): void {
-
+    this.likeService.setLike(this.link.id).subscribe(()=>{
+      this.link.countOfLikes++;
+    },error =>
+    this.openSnackBar(error.message,"close"));
   }
 
   setDislike(): void {
-
+    this.likeService.setDislike(this.link.id).subscribe(()=>{
+      this.link.countOfDislikes++;
+    },error =>
+      this.openSnackBar(error.message,"close"));
   }
 
   loadPage(page: number) {
     if (page !== this.previousPage) {
       this.previousPage = page;
-      this.commentService.getCommentsForLink(this.link.id,page - 1).subscribe((commentPage: CommentPageDto) => {
-        this.totalItems = commentPage.totalPage*this.itemsPerPage;
+      this.commentService.getCommentsForLink(this.link.id, page - 1).subscribe((commentPage: CommentPageDto) => {
+        this.totalItems = commentPage.totalPage * this.itemsPerPage;
         this.page = commentPage.currentPage + 1;
         this.comments = commentPage.comments;
       });
@@ -91,16 +103,16 @@ export class ItemLinkComponent implements OnInit {
   }
 
   addComment() {
-    this.userService.activeUser.subscribe((user:User)=>{
-      let comment:Comment={
-        id:null,
-        author:this.link.user,
-        text:this.commentForm.controls['comment'].value,
-        date:null,
-        link:this.link
-      }
+    this.userService.activeUser.subscribe((user: User) => {
+      let comment: Comment = {
+        id: null,
+        author: user,
+        text: this.commentForm.controls['comment'].value,
+        date: null,
+        link: this.link
+      };
       this.commentService.saveComment(comment).subscribe((comment: Comment) => {
-        this.commentForm.controls['comment'].reset("")
+        this.commentForm.controls['comment'].reset('');
         if (this.comments.length === 20 && this.page === 1 && comment.link.id === this.link.id) {
           this.comments.unshift(comment);
           this.comments.splice(4, 1);
@@ -108,15 +120,15 @@ export class ItemLinkComponent implements OnInit {
         } else if (this.page !== 1) {
           this.totalItems++;
         } else {
-          this.totalItems++;
           this.comments.unshift(comment);
         }
 
-      },error => {
-        this.openSnackBar(error.message,"Close");
-      })
-    })
+      }, error => {
+        this.openSnackBar(error.message, 'Close');
+      });
+    });
   }
+
   openSnackBar(message: string, action: string) {
     this._snackBar.open(message, action, {
       duration: 2000,

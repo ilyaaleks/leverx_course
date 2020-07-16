@@ -10,11 +10,11 @@
         <button *ngIf="!activeUser"  class="mark_button" (click)="setLike()">
           <i class="far fa-thumbs-up large_icon"></i>
         </button>
-        <span class="text-muted h4">{{countOfLikes}}</span>
+        <span class="text-muted h4">{{link.countOfLikes}}</span>
       </span>
       <span>
         <button (click)="setDislike()"  class="mark_button" *ngIf="!activeUser"><i class="far fa-thumbs-down large_icon"></i></button>
-        <span class="text-muted h4">{{countOfDislike}}</span>
+        <span class="text-muted h4">{{link.countOfDislikes}}</span>
       </span>
     </section>
     <p class="card-text h4">Name: {{link.name}}</p>

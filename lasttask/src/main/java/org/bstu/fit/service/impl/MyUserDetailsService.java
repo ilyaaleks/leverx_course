@@ -2,11 +2,13 @@ package org.bstu.fit.service.impl;
 
 import org.bstu.fit.model.User;
 import org.bstu.fit.service.UserService;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import javax.security.auth.login.CredentialException;
 import java.util.HashSet;
@@ -28,11 +30,13 @@ public class MyUserDetailsService implements UserDetailsService {
         User user = userService.findByUsername(username);
         activeUser=user;
         if (user == null) {
-            throw new UsernameNotFoundException("Invalid username or password.");
+            throw new ResponseStatusException(
+                    HttpStatus.FORBIDDEN, "Invalid username");
         }
         if(user.isActivate()==false)
         {
-            throw new IllegalArgumentException("Account doesn't activate");
+                throw new ResponseStatusException(
+                        HttpStatus.FORBIDDEN, "Access denied, user not activated");
         }
         return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(), getAuthority(user));
     }

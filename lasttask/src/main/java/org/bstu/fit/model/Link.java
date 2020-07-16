@@ -31,7 +31,7 @@ public class Link {
     private Set<Tag> tags;
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
-    @OneToMany(mappedBy = "link", { CascadeType.MERGE, CascadeType.REFRESH, CascadeType.DETACH, CascadeType.REMOVE}, fetch = FetchType.EAGER, orphanRemoval = true)
+    @OneToMany(mappedBy = "link", cascade = { CascadeType.MERGE, CascadeType.REFRESH, CascadeType.DETACH, CascadeType.REMOVE}, fetch = FetchType.EAGER, orphanRemoval = true)
     private Set<Comment> comments;
     private long countOfLikes;
     private long countOfDislikes;

@@ -56,14 +56,16 @@ public class UserServiceImpl implements UserService {
         User user = UserMapper.INSTANCE.fromDTO(userDto);
         User existUser = userRepository.findByUsername(user.getUsername());
         if (existUser != null) {
-            throw new IllegalArgumentException("User is exist");
+            throw new ResponseStatusException(
+                    HttpStatus.CONFLICT, "User is exist");
         }
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setActivate(false);
         user.setActivationCode(UUID.randomUUID().toString());
         user.setPhotoUrl("default.jpg");
         if (StringUtils.isEmpty(user.getEmail())) {
-            throw new IllegalArgumentException("Email is invalid");
+            throw new ResponseStatusException(
+                    HttpStatus.FORBIDDEN, "Email is invalid");
         }
         String message = String.format("Hello to UWSR, %s!\n" +
                         "We are glad to see you. Please, visit the following link: " + env.getRequiredProperty("server.url") + "registration/activate/%s",
@@ -78,7 +80,8 @@ public class UserServiceImpl implements UserService {
     public UserPageDto getPageableUser(Pageable pageable) {
         Page<User> users = userRepository.findAll(pageable);
         if (users == null) {
-            throw new IllegalArgumentException("Page parameters is invalid");
+            throw new ResponseStatusException(
+                    HttpStatus.FORBIDDEN, "Page parameters is invalid");
         }
         UserPageDto userPageDto = new UserPageDto();
         for (User user : users.getContent()) {
@@ -94,7 +97,8 @@ public class UserServiceImpl implements UserService {
     public User findByUsername(String username) {
         User user = userRepository.findByUsername(username);
         if (user == null) {
-            throw new UsernameNotFoundException("Username not found");
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND, "Page parameters is invalid");
         }
         return user;
     }
@@ -103,7 +107,8 @@ public class UserServiceImpl implements UserService {
     public User findById(long id) {
         User user = userRepository.findById(id);
         if (user == null) {
-            throw new IllegalArgumentException("User with id not found");
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND, "User with id not found");
         }
         return user;
     }
@@ -116,7 +121,8 @@ public class UserServiceImpl implements UserService {
     @Override
     public User updateUser(UserDto userDto) {
         if (!userDto.getUsername().equals(getUsernameOfCurrentUser())) {
-            throw new IllegalArgumentException("Unable to update user");
+            throw new ResponseStatusException(
+                    HttpStatus.FORBIDDEN, "Access denied");
         }
         User user = userRepository.findByUsername(userDto.getUsername());
         user.setLastName(userDto.getLastName());
@@ -141,7 +147,7 @@ public class UserServiceImpl implements UserService {
         catch (IllegalArgumentException ex)
         {
             throw new ResponseStatusException(
-                    HttpStatus.NOT_FOUND, "Invalid user activation code", ex);
+                    HttpStatus.NOT_FOUND, "Access denied, user already activated or not registered", ex);
         }
 
     }
@@ -182,6 +188,11 @@ public class UserServiceImpl implements UserService {
 
 
         return new ImagePath(userRepository.save(user).getPhotoUrl());
+    }
+
+    @Override
+    public User findByEmail(String email) {
+        return null;
     }
 
     private String getUsernameOfCurrentUser() {

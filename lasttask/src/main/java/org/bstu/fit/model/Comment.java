@@ -18,7 +18,6 @@ public class Comment{
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name="user_id")
     private User author;
-    @NotBlank(message = "You dont fill data")
     private String text;
     private Date date;
     @EqualsAndHashCode.Exclude

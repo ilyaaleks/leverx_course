@@ -1,14 +1,18 @@
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
   <div class="container">
-    <a class="navbar-brand" href="Index.html" routerLink="/story">Instagram</a>
+    <a class="navbar-brand" href="Index.html" routerLink="/story">UWSR</a>
     <button class="navbar-toggler" type="button" data-target="#my-nav" data-toggle="collapse">
-      <span class="navbar-toggler-icon">INSTAGRAM</span>
     </button>
 
     <div id="my-nav" class="collapse navbar-collapse justify-content-end">
       <ul class="nav navbar-nav mx-auto">
         <li>
-
+          <form [formGroup]="searchForm">
+            <div class="input-group-prepend ">
+              <input type="text" formControlName="name" class="form-control" placeholder="Name of link"/>
+              <input class="btn btn-dark ml-1" type="button" (click)="findByName()" value="findByName"/>
+            </div>
+          </form>
         </li>
       </ul>
       <ul class="navbar-nav">

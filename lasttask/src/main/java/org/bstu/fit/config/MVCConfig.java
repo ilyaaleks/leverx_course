@@ -23,4 +23,5 @@ public class MVCConfig implements WebMvcConfigurer {
         ByteArrayHttpMessageConverter byteConverter = new ByteArrayHttpMessageConverter();
         converters.add(byteConverter);
     }
+
 }

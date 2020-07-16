@@ -1,6 +1,9 @@
 package org.bstu.fit.dto;
 
+import javax.validation.constraints.NotNull;
+
 public class AuthToken {
+    @NotNull(message = "Token can't be null")
     private String token;
 
     public AuthToken() {

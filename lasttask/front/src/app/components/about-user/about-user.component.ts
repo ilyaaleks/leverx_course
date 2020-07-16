@@ -53,13 +53,13 @@ export class AboutUserComponent implements OnInit {
             this.currentUserPage = user;
             if (!this.pageOfCurrentUser) {
 
-              this.linkService.getAllLinksForAuthUser(0, this.requestUserId).subscribe((linkPage: LinkPageDto) => {
+              this.linkService.getAllPublicUserLinks(0, this.currentUserPage).subscribe((linkPage: LinkPageDto) => {
                 this.totalItems = linkPage.totalPage * this.itemsPerPage;
                 this.page = 1;
                 this.links = linkPage.links;
               });
             } else {
-              this.linkService.getAllUserLinks(0).subscribe((linkPage: LinkPageDto) => {
+              this.linkService.getAllUserLinks(0,this.currentUserPage).subscribe((linkPage: LinkPageDto) => {
                 this.totalItems = linkPage.totalPage * this.itemsPerPage;
                 this.page = 1;
                 this.links = linkPage.links;
@@ -122,13 +122,13 @@ export class AboutUserComponent implements OnInit {
     if (page !== this.previousPage) {
       this.previousPage = page;
       if (!this.pageOfCurrentUser) {
-        this.linkService.getAllLinksForAuthUser(0, this.requestUserId).subscribe((linkPage: LinkPageDto) => {
+        this.linkService.getAllPublicUserLinks(page-1, this.currentUserPage).subscribe((linkPage: LinkPageDto) => {
           this.totalItems = linkPage.totalPage * this.itemsPerPage;
           this.page = linkPage.currentPage + 1;
           this.links = linkPage.links;
         });
       } else {
-        this.linkService.getAllUserLinks(0).subscribe((linkPage: LinkPageDto) => {
+        this.linkService.getAllUserLinks(page-1,this.currentUserPage).subscribe((linkPage: LinkPageDto) => {
           this.totalItems = linkPage.totalPage * this.itemsPerPage;
           this.page = linkPage.currentPage + 1;
           this.links = linkPage.links;

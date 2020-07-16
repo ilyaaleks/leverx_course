@@ -14,9 +14,11 @@ import org.bstu.fit.repository.UserRepository;
 import org.bstu.fit.service.CommentService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -36,7 +38,8 @@ public class CommentServiceImpl implements CommentService {
         Page<Comment> commentPage= commentRepository.findByLink_Id(linkId,pageable);
         if(commentPage==null)
         {
-            throw new IllegalArgumentException("Wrong link id");
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND, "Invalid link id");
         }
         List<CommentDto> commentDtos=new ArrayList<>();
         for(Comment comment:commentPage.getContent())
@@ -52,7 +55,8 @@ public class CommentServiceImpl implements CommentService {
     public Comment saveComment(CommentDto commentDto) {
         if(commentDto==null || !commentDto.getAuthor().getUsername().equals(getUsernameOfCurrentUser()))
         {
-            throw new IllegalArgumentException("Save comment: wrong parameters");
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST, "Wrong parameters of comment");
         }
         User user=userRepository.findByUsername(commentDto.getAuthor().getUsername());
         Comment comment=CommentMapper.INSTANCE.fromDTO(commentDto);
@@ -65,12 +69,14 @@ public class CommentServiceImpl implements CommentService {
     public Comment updateComment(CommentDto commentDto) {
         if(commentDto==null || !commentDto.getAuthor().getUsername().equals(getUsernameOfCurrentUser()))
         {
-            throw new IllegalArgumentException("Update comment: wrong parameters");
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST, "Update comment: wrong parameters");
         }
         Comment comment=commentRepository.findById(commentDto.getId());
         if(comment==null)
         {
-            throw new IllegalArgumentException("Update comment: this comment does not exist");
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND, "Update comment: wrong parameters");
         }
         comment.setDate(new Date());
         comment.setText(commentDto.getText());
@@ -79,6 +85,12 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public void delete(long commentId) {
+        Comment comment=commentRepository.findById(commentId);
+        if(!comment.getAuthor().getUsername().equals(getUsernameOfCurrentUser()))
+        {
+            throw new ResponseStatusException(
+                    HttpStatus.FORBIDDEN, "Access denied");
+        }
         commentRepository.deleteById(commentId);
     }
     private String getUsernameOfCurrentUser()

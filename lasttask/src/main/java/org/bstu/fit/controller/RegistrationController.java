@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 import java.io.IOException;
 
 @RestController
@@ -21,7 +22,7 @@ public class RegistrationController {
 
     @PostMapping
     @ResponseStatus(value = HttpStatus.OK)
-    public void register(@RequestBody UserDto user)
+    public void register(@Valid @RequestBody UserDto user)
     {
         UserMapper.INSTANCE.toDTO(userService.register(user));
     }

@@ -10,6 +10,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+
 @RestController
 @RequestMapping("api/comment")
 public class CommentController {
@@ -24,13 +26,13 @@ public class CommentController {
         return ResponseEntity.ok(commentService.getLinkComments(linkId,pageable));
     }
     @PostMapping
-    public ResponseEntity<CommentDto> save(@RequestBody CommentDto commentDto)
+    public ResponseEntity<CommentDto> save(@Valid @RequestBody CommentDto commentDto)
     {
        Comment comment= commentService.saveComment(commentDto);
        return ResponseEntity.ok(CommentMapper.INSTANCE.toDTO(comment));
     }
     @PutMapping
-    public ResponseEntity<CommentDto> update(@RequestBody CommentDto commentDto)
+    public ResponseEntity<CommentDto> update(@Valid @RequestBody CommentDto commentDto)
     {
         Comment comment= commentService.updateComment(commentDto);
         return ResponseEntity.ok(CommentMapper.INSTANCE.toDTO(comment));
